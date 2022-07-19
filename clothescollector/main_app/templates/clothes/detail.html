@@ -15,6 +15,12 @@
         <p>Price: 1200</p>
         {% endif %}
     </div>
+    <div class="card-action">
+        <a href="{% url 'clothes_update' cloth.id %}">Edit</a>
+        <a href="{% url 'clothes_delete' cloth.id %}">Delete</a>
+      </div>
+
+
 </div>
 
 
