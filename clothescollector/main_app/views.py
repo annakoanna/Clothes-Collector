@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Cloth
+from .forms import AlterForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 
@@ -21,7 +22,8 @@ def clothes_index(request):
 
 def clothes_detail(request, cloth_id):
     cloth = Cloth.objects.get(id=cloth_id)
-    return render(request, 'clothes/detail.html', { 'cloth': cloth })
+    alter_form = AlterForm()
+    return render(request, 'clothes/detail.html', { 'cloth': cloth, 'alter_form': alter_form })
 
 class ClothCreate(CreateView):
   model = Cloth
@@ -35,3 +37,15 @@ class ClothUpdate(UpdateView):
 class ClothDelete(DeleteView):
   model = Cloth
   success_url = '/clothes/'
+
+def add_alter(request, cloth_id):
+  form = AlterForm(request.POST)
+  # validate the form
+  if form.is_valid():
+    # don't save the form to the db until it
+    # has the cat_id assigned
+    new_alter = form.save(commit=False)
+    new_alter.cloth_id = cloth_id
+    new_alter.save()
+  return redirect('detail', cloth_id=cloth_id)
+  
